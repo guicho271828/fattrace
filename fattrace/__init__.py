@@ -2,6 +2,7 @@
 
 import os.path
 import sys, traceback, types, linecache
+from functools import partial
 from colors import red, blue, yellow, green
 
 def err(*args, **kwargs):
@@ -114,14 +115,13 @@ def print_locals(o,
                                                                      e))
 
 
-def format(exit=True,
-           threshold=3,
-           include_self=True,
-           ignore={},
-           ignore_type={},
-           include_private=False):
+def __format(type, value, tb,
+             threshold=3,
+             include_self=True,
+             ignore={},
+             ignore_type={},
+             include_private=False):
     err("Fancy Traceback (most recent call last):")
-    type, value, tb = sys.exc_info()
 
     for f, f_lineno in traceback.walk_tb(tb):
         co = f.f_code
@@ -148,8 +148,38 @@ def format(exit=True,
 
     err()
     err(*(traceback.format_exception_only(type,value)))
+
+
+def format(exit=True,
+           threshold=3,
+           include_self=True,
+           ignore={},
+           ignore_type={},
+           include_private=False):
+    type, value, tb = sys.exc_info()
+    __format(type, value, tb,
+             threshold       = threshold,
+             include_self    = include_self,
+             ignore          = ignore,
+             ignore_type     = ignore_type,
+             include_private = include_private)
     if exit:
         sys.exit(1)
+
+
+
+def install(threshold=3,
+            include_self=True,
+            ignore={},
+            ignore_type={},
+            include_private=False):
+    sys.excepthook = partial(
+        __format,
+        threshold       = threshold,
+        include_self    = include_self,
+        ignore          = ignore,
+        ignore_type     = ignore_type,
+        include_private = include_private)
 
 
 if __name__ == '__main__':
