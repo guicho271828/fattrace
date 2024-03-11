@@ -1,6 +1,7 @@
 
 import traceback
 from fattrace import err, format
+from dataclasses import dataclass
 
 def fn1():
     a = 1
@@ -15,17 +16,22 @@ class MultiLineString:
     def __repr__(self):
         return "aaa\nbbb\nccc"
 
+
+@dataclass
+class ArrayLike:
+    dtype : str
+    shape : list
+
+
 class A():
     def __init__(self):
         self.x = 10
         self.y = B()
         self.field_name = 10
-        # self.super_long_field_name = 10
-        # self.gigantic_field_name = 10
-        # self.long_gigantic_field_name = 10
-        # self.stupidly_long_gigantic_field_name = 10
-        # self.duper_stupidly_long_gigantic_field_name = 10
         self.super_duper_stupidly_long_gigantic_field_name = 10
+
+        self.array_like = ArrayLike(dtype="int", shape=(1,2,2))
+
         self.multi_line_string = MultiLineString()
     def m(self,y,
           super_duper_long_variable,
