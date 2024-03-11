@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import os.path
 import sys, traceback, types, linecache
 from functools import partial
@@ -32,11 +33,12 @@ def remove_array(thing):
 
 
 def print_locals(o,
-                 include_private=False,
-                 threshold=3,
-                 include_self=True,
-                 ignore={},
-                 ignore_type={}):
+                 threshold:int=3,
+                 include_self:bool=True,
+                 include_private:bool=False,
+                 ignore:set[str]={},
+                 ignore_type:set[type]={},
+                 ):
     maxlinelen=1000
     maxlen=20
     ignore_type = set(ignore_type)
@@ -116,12 +118,19 @@ def print_locals(o,
                                                                      e))
 
 
+def is_under_cwd(path):
+    pwd = os.getcwd()
+    return pwd == os.path.commonpath([pwd, os.path.abspath(path)])
+
+
 def __format(type, value, tb,
-             threshold=3,
-             include_self=True,
-             ignore={},
-             ignore_type={},
-             include_private=False):
+             threshold:int=3,
+             include_self:bool=True,
+             include_private:bool=False,
+             include_external:bool=False,
+             ignore:set[str]={},
+             ignore_type:set[type]={},
+             ):
     err("Fat Traceback (most recent call last):")
 
     for f, f_lineno in traceback.walk_tb(tb):
@@ -132,54 +141,71 @@ def __format(type, value, tb,
         f_locals = f.f_locals
         f_line = linecache.getline(f_filename, f_lineno).strip()
 
-        err(" ",
-            green("File"),
-            os.path.relpath(f_filename),
-            green("line"),
-            f_lineno,green("function"),
-            f_name,":",f_line)
-        print_locals(f_locals,
-                     threshold       = threshold,
-                     include_self    = include_self,
-                     ignore          = ignore,
-                     ignore_type     = ignore_type,
-                     include_private = include_private)
-        err()
-
+        if include_external or is_under_cwd(f_filename):
+            err(" ",
+                green("File"),
+                os.path.relpath(f_filename),
+                green("line"),
+                f_lineno,
+                green("function"),
+                f_name,":",f_line)
+            print_locals(f_locals,
+                         threshold       = threshold,
+                         include_self    = include_self,
+                         include_private = include_private,
+                         ignore          = ignore,
+                         ignore_type     = ignore_type,)
+            err()
+        else:
+            err(" ",
+                yellow("Skipped"),
+                green("File"),
+                os.path.relpath(f_filename),
+                green("line"),
+                f_lineno,
+                green("function"),
+                f_name,":",f_line,
+                )
 
     err()
     err(*(traceback.format_exception_only(type,value)))
 
 
 def format(exit=True,
-           threshold=3,
-           include_self=True,
-           ignore={},
-           ignore_type={},
-           include_private=False):
+           threshold:int=3,
+           include_self:bool=True,
+           include_private:bool=False,
+           include_external:bool=False,
+           ignore:set[str]={},
+           ignore_type:set[type]={},
+           ):
     type, value, tb = sys.exc_info()
     __format(type, value, tb,
-             threshold       = threshold,
-             include_self    = include_self,
-             ignore          = ignore,
-             ignore_type     = ignore_type,
-             include_private = include_private)
+             threshold        = threshold,
+             include_self     = include_self,
+             include_private  = include_private,
+             include_external = include_external,
+             ignore           = ignore,
+             ignore_type      = ignore_type,)
     if exit:
         sys.exit(1)
 
 
-def install(threshold=3,
-            include_self=True,
-            ignore={},
-            ignore_type={},
-            include_private=False):
+def install(threshold:int=3,
+            include_self:bool=True,
+            include_private:bool=False,
+            include_external:bool=False,
+            ignore:set[str]={},
+            ignore_type:set[type]={},
+            ):
     sys.excepthook = partial(
         __format,
-        threshold       = threshold,
-        include_self    = include_self,
-        ignore          = ignore,
-        ignore_type     = ignore_type,
-        include_private = include_private)
+        threshold        = threshold,
+        include_self     = include_self,
+        include_private  = include_private,
+        include_external = include_external,
+        ignore           = ignore,
+        ignore_type      = ignore_type,)
 
 
 
