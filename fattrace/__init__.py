@@ -121,7 +121,7 @@ def __format(type, value, tb,
              ignore={},
              ignore_type={},
              include_private=False):
-    err("Fancy Traceback (most recent call last):")
+    err("Fat Traceback (most recent call last):")
 
     for f, f_lineno in traceback.walk_tb(tb):
         co = f.f_code
