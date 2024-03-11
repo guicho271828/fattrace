@@ -43,10 +43,11 @@ def print_locals(o,
     ignore = set(ignore)
     ignore_type |= {types.FunctionType, types.ModuleType, type}
 
-    def include(o,key):
-        return (include_private or not key.startswith("__"))       \
-          and key not in ignore                             \
-          and not isinstance(get(o,key),tuple(ignore_type))
+    def include(o,key) -> bool:
+        "Filter rule for inclusion. If it returns false, the object and the key will be ignored."
+        return (include_private or not key.startswith("__"))  \
+          and (key not in ignore)                             \
+          and (not isinstance(get(o,key),tuple(ignore_type)))
 
     def printer(thing):
         if isinstance(thing,list):
