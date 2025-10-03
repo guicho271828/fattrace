@@ -65,7 +65,7 @@ def print_locals(o,
         elif isinstance(thing,dict):
             return {k:printer(remove_array(v)) for k,v in thing.items()}
         elif isinstance(thing,str):
-            return thing[:500]
+            return thing[:486]+"...(truncated)"
         elif isinstance(thing,bytes):
             return thing[:500]
         else:
