@@ -65,7 +65,12 @@ def print_locals(o,
         elif isinstance(thing,dict):
             return {k:printer(remove_array(v)) for k,v in thing.items()}
         elif isinstance(thing,str):
-            return thing[:486]+"...(truncated)"
+            msg = "...(truncated by fattrace)..."
+            if len(thing) >= 500:
+                to_show = (500-len(msg))//2
+                return thing[:to_show]+msg+thing[-to_show:]
+            else:
+                return thing
         elif isinstance(thing,bytes):
             return thing[:500]
         else:
