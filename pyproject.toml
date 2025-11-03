@@ -1,6 +1,7 @@
 [project]
 name = "fattrace"
 version = "0.0.1"
+license = "MIT"
 authors = [
     { name="Masataro Asai", email="guicho271828@gmail.com" },
 ]
@@ -8,9 +9,8 @@ description = "Informative Stacktrace that shows everything on the stack"
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
