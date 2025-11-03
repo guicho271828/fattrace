@@ -48,3 +48,6 @@ def install(threshold:int=3,
 * `ignore` : A set of strings. Variables and members matching any of the names are excluded from the trace.
 * `ignore_type` : A set of types. Variables and members matching any of the types are excluded from the trace.
 
+## License
+
+MIT
