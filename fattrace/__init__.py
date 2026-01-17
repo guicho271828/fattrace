@@ -36,8 +36,8 @@ def print_locals(o,
                  threshold:int=3,
                  include_self:bool=True,
                  include_private:bool=False,
-                 ignore:set[str]={},
-                 ignore_type:set[type]={},
+                 ignore:set[str]=set(),
+                 ignore_type:set[type]=set(),
                  ):
     maxlinelen=1000
     maxlen=20
@@ -139,8 +139,8 @@ def __format(type, value, tb,
              include_self:bool=True,
              include_private:bool=False,
              include_external:bool=False,
-             ignore:set[str]={},
-             ignore_type:set[type]={},
+             ignore:set[str]=set(),
+             ignore_type:set[type]=set(),
              ):
     err("Fat Traceback (most recent call last):")
 
@@ -187,8 +187,8 @@ def format(exit=True,
            include_self:bool=True,
            include_private:bool=False,
            include_external:bool=False,
-           ignore:set[str]={},
-           ignore_type:set[type]={},
+           ignore:set[str]=set(),
+           ignore_type:set[type]=set(),
            ):
     type, value, tb = sys.exc_info()
     __format(type, value, tb,
@@ -206,8 +206,8 @@ def install(threshold:int=3,
             include_self:bool=True,
             include_private:bool=False,
             include_external:bool=False,
-            ignore:set[str]={},
-            ignore_type:set[type]={},
+            ignore:set[str]=set(),
+            ignore_type:set[type]=set(),
             ):
     sys.excepthook = partial(
         __format,
