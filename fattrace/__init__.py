@@ -112,7 +112,13 @@ def print_locals(o,
                                                          e))
             if include_self and (key == "self"):
                 __self = get(o,key)
-                for key in vars(__self):
+                try:
+                    vars_dict = vars(__self)
+                except TypeError as e: # vars() argument must have __dict__ attribute
+                    err("{} = Error printing self : {}".format(red(str(key)).rjust(maxlen+4), e))
+                    continue
+
+                for key in vars_dict:
                     if include(__self,key):
                         try:
                             err("{} = {}".format((green("self")+"."+yellow(str(key))).rjust(maxlen+13), # 5+2*4 for double ANSI color
