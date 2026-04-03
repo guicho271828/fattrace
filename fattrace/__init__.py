@@ -21,13 +21,28 @@ def get(o,key):
 def remove_array(thing):
     available_arraylike_fields = [
         name
-        for name in ["dtype","shape","device","layout"]
+        for name in ["dtype","shape","device","layout","numel","size"]
         if hasattr(thing, name)
     ]
     if len(available_arraylike_fields) > 0:
-        return "<"+" ".join([
-            type(thing).__name__,
-            *[ str(getattr(thing,name)) for name in available_arraylike_fields ]])+">"
+        additional = None
+        if hasattr(thing, "numel"): # torch
+            if thing.numel() <= 16:
+                additional = thing.tolist()
+        elif hasattr(thing, "size"): # numpy
+            if thing.size() <= 16:
+                additional = thing.tolist()
+        if additional is None:
+            return "<"+" ".join([
+                type(thing).__name__,
+                *[ str(getattr(thing,name)) for name in available_arraylike_fields ]
+            ])+">"
+        else:
+            return "<"+" ".join([
+                type(thing).__name__,
+                *[ str(getattr(thing,name)) for name in available_arraylike_fields ],
+                str(additional),
+            ])+">"
     else:
         return thing
 
