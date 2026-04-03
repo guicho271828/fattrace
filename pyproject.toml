@@ -1,6 +1,6 @@
 [project]
 name = "fattrace"
-version = "0.0.3"
+version = "0.0.4"
 license = "MIT"
 authors = [
     { name="Masataro Asai", email="guicho271828@gmail.com" },
